@@ -94,7 +94,49 @@ function initDBConnection() {
 }
 
 initDBConnection();
+//
+var nano    = require('nano')('https://snow2016.cloudant.com/_all_dbs');
+//var Cloudant = require('cloudant');
 
+var me = "nodejs";         // Substitute with your Cloudant user account. 
+var otherUsername = "snow2016"; // Substitute with some other Cloudant user account. 
+var otherPassword ='Snow@6200';  
+
+var Cloudant = require('cloudant');
+
+//module.exports =function(app) {
+
+var clod=Cloudant({account:me, username:otherUsername, password:otherPassword}, function(er, cloudant, reply) {
+  if (er) {
+    throw er;
+  }
+  console.log('Connected with username: %s', reply.userCtx.name);
+  
+});
+
+var dbs = clod.db.use('student');
+//console.log("datadases:  --",dbs.list().path);
+
+dbs.get("jeff peter", function(err, data) {
+    // The rest of your code goes here. For example:
+    console.log("Found dog:", data);
+});
+
+
+ dbs.find({selector:{name:'jeff peter'}}, function(er, result) {
+  if (er) {
+    //throw er;
+    return console.log('Error authenticating: ' + er.message);
+   }
+ 
+  console.log('Found %d documents with name Alice', result.docs.length);
+  for (var i = 0; i < result.docs.length; i++) {
+    console.log('  Doc id: %s', result.docs[i]._id);
+  }
+  
+});
+
+//
 app.get('/', routes.index);
 
 function createResponseData(id, name, value, attachments) {
